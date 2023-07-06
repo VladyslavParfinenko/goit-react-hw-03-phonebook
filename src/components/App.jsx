@@ -16,6 +16,19 @@ class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   createContact = ({ name, number }) => {
     const filterName = this.state.contacts.find(
       contact => contact.name.toLowerCase() === name.toLowerCase()
@@ -72,7 +85,10 @@ class App extends Component {
         <ContactForm onSubmit={this.createContact} />
         <h2>Contacts</h2>
         <Filter filter={filter} onChange={this.handleFilterChange} />
-        <ContactList filteredContacts={filteredContacts} onDeleteContact={this.deleteContact} />
+        <ContactList
+          filteredContacts={filteredContacts}
+          onDeleteContact={this.deleteContact}
+        />
       </div>
     );
   }
